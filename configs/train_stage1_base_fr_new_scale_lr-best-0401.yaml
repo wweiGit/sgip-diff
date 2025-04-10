@@ -1,0 +1,59 @@
+model:
+  swinir:
+    target: sgip.model.swinir.SwinIR
+    params:
+      img_size: 64
+      patch_size: 1
+      in_chans: 3
+      embed_dim: 180
+      depths: [6, 6, 6, 6, 6, 6, 6, 6]
+      num_heads: [6, 6, 6, 6, 6, 6, 6, 6]
+      window_size: 8
+      mlp_ratio: 2
+      sf: 8
+      img_range: 1.0
+      upsampler: "nearest+conv"
+      resi_connection: "1conv"
+      unshuffle: False
+      unshuffle_scale: 1
+
+dataset:
+  train:
+    target: sgip.dataset.sgip_dataset.DatasetPair
+    params:
+      # training file list path
+      file_list: /root/autodl-tmp/project/SGIP-dev-v2/data_json/PIE_clean_s1expos_train.json
+      file_backend_cfg:
+        target: sgip.dataset.file_backend.HardDiskBackend
+      out_size: 64
+      crop_type: none
+      gt_path: /root/autodl-tmp/dataset/DATA/MTPIE/train_val_split/train/gt
+      aug: None
+  val:
+    target: sgip.dataset.sgip_dataset.DatasetPair
+    params:
+      # validation file list path
+      file_list: /root/autodl-tmp/project/SGIP-dev-v2/data_json/PIE_clean_s1expos_train.json
+      file_backend_cfg:
+        target: sgip.dataset.file_backend.HardDiskBackend
+      out_size: 64
+      crop_type: none
+      gt_path: /root/autodl-tmp/dataset/DATA/MTPIE/train_val_split/train/gt
+      aug: None
+
+batch_transform:
+  target: sgip.dataset.batch_transform.IdentityBatchTransform
+
+train:
+  # experiment directory path
+  exp_dir: /root/autodl-tmp/project/SGIP-dev-v2/work_dirs/train_stage1_base_fr_new_scale_lr
+  learning_rate: 3e-4
+  # total batch size
+  batch_size: 8
+  num_workers: 8
+  train_steps: 104500
+  log_every: 1000
+  ckpt_every: 5220
+  image_every: 2000000
+  val_every: 5220
+  resume: ~
